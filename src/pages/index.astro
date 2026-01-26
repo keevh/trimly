@@ -1,0 +1,8 @@
+---
+import Landing from "../components/Landing";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Trimly | Acortador de enlaces open source" pathname={Astro.url.pathname}>
+  <Landing client:load />
+</BaseLayout>

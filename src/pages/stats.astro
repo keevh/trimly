@@ -1,0 +1,10 @@
+---
+import Stats from "../components/Stats";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const id = Astro.url.searchParams.get("id") ?? "demo";
+---
+
+<BaseLayout title={`Trimly Stats | ${id}`} pathname={Astro.url.pathname}>
+  <Stats id={id} client:only="react" />
+</BaseLayout>
