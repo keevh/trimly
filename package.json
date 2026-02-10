@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 3000",
     "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview --host 0.0.0.0 --port 3000",
-    "lint": "astro check"
+    "lint": "astro check",
+    "db:migrate": "node ./scripts/migrate.mjs"
   },
   "keywords": [
     "astro",
@@ -15,24 +17,31 @@
   ],
   "author": "",
   "license": "ISC",
+  "packageManager": "pnpm@11.5.2",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.5.2",
+      "version": "11.5.2",
       "onFail": "download"
     }
   },
   "type": "module",
   "dependencies": {
+    "@astrojs/node": "^10.1.4",
     "@astrojs/react": "^5.0.7",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.4.5",
     "lucide-react": "^1.17.0",
+    "pg": "^8.16.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "recharts": "^3.8.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   }
