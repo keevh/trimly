@@ -1,0 +1,87 @@
+---
+import Stats, { type StatsPayload } from "../../components/Stats";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { fetchLinkStats } from "../../lib/links.js";
+
+const slug = Astro.params.slug?.trim().toLowerCase() ?? "demo";
+const shortUrl = `${Astro.url.origin}/t/${slug}`;
+const initialStats = (slug ? await fetchLinkStats(slug) : null) as StatsPayload | null;
+---
+
+<BaseLayout title={`Trimly Stats | ${slug}`} pathname={Astro.url.pathname}>
+  <Stats slug={slug} shortUrl={shortUrl} initialStats={initialStats} />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector("[data-stats-page]") as HTMLElement | null;
+
+  if (root) {
+    const slug = root.dataset.slug;
+    const shortUrl = root.dataset.shortUrl;
+    const copyButton = root.querySelector("[data-copy-short-url]") as HTMLButtonElement | null;
+    const copyLabel = root.querySelector("[data-copy-short-url-label]") as HTMLElement | null;
+    const managementTokenInput = root.querySelector(
+      "[data-management-token-input]",
+    ) as HTMLInputElement | null;
+    const deleteButton = root.querySelector("[data-delete-link-button]") as HTMLButtonElement | null;
+    const deleteLabel = root.querySelector("[data-delete-link-label]") as HTMLElement | null;
+    const status = root.querySelector("[data-delete-status]") as HTMLElement | null;
+
+    if (copyButton && shortUrl) {
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(shortUrl);
+          if (copyLabel) copyLabel.textContent = "Copiado";
+          window.setTimeout(() => {
+            if (copyLabel) copyLabel.textContent = "Copiar enlace";
+          }, 1500);
+        } catch {
+          if (copyLabel) copyLabel.textContent = "No se pudo copiar";
+          window.setTimeout(() => {
+            if (copyLabel) copyLabel.textContent = "Copiar enlace";
+          }, 1500);
+        }
+      });
+    }
+
+    if (deleteButton && managementTokenInput && status && slug) {
+      deleteButton.addEventListener("click", async () => {
+        const managementToken = managementTokenInput.value.trim();
+
+        if (!managementToken) {
+          status.textContent = "Debes ingresar el token privado.";
+          status.className = "mt-3 text-sm text-error";
+          return;
+        }
+
+        deleteButton.setAttribute("disabled", "true");
+        if (deleteLabel) deleteLabel.textContent = "Eliminando...";
+        status.textContent = "";
+
+        try {
+          const response = await fetch(`/api/links/${encodeURIComponent(slug)}`, {
+            method: "DELETE",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ managementToken }),
+          });
+          const payload = await response.json().catch(() => null);
+
+          if (!response.ok) {
+            status.textContent = payload?.message ?? "No se pudo eliminar el enlace.";
+            status.className = "mt-3 text-sm text-error";
+            deleteButton.removeAttribute("disabled");
+            if (deleteLabel) deleteLabel.textContent = "Eliminar enlace";
+            return;
+          }
+
+          window.location.reload();
+        } catch {
+          status.textContent = "No se pudo conectar con el servidor.";
+          status.className = "mt-3 text-sm text-error";
+          deleteButton.removeAttribute("disabled");
+          if (deleteLabel) deleteLabel.textContent = "Eliminar enlace";
+        }
+      });
+    }
+  }
+</script>

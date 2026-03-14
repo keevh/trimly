@@ -8,7 +8,6 @@ interface Props {
 }
 
 const { title, pathname } = Astro.props;
-const isDemoOrStats = pathname === "/demo" || pathname.startsWith("/stats");
 const navLinkClass = "text-on-surface-variant font-medium hover:text-primary transition-all duration-200";
 const activeNavLinkClass = "text-primary font-medium hover:text-primary transition-all duration-200";
 ---
@@ -34,7 +33,7 @@ const activeNavLinkClass = "text-primary font-medium hover:text-primary transiti
 
           <nav class="hidden md:flex items-center gap-8">
             <a href="/demo" class={pathname === "/demo" ? activeNavLinkClass : navLinkClass}>Demo</a>
-            <a href="/stats?id=demo" class={pathname.startsWith("/stats") ? activeNavLinkClass : navLinkClass}>Stats</a>
+            <a href="/s/demo" class={pathname.startsWith("/s/") ? activeNavLinkClass : navLinkClass}>Stats</a>
             <a href="https://github.com/keevh/trimly" target="_blank" rel="noreferrer" class={navLinkClass}>GitHub</a>
           </nav>
 
