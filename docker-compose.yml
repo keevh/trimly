@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: trimly
+      POSTGRES_USER: trimly
+      POSTGRES_PASSWORD: trimly
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trimly -d trimly"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  app:
+    build: .
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: postgres://trimly:trimly@postgres:5432/trimly
+      IP_HASH_SALT: trimly-dev-salt
+      APP_BASE_URL: http://localhost:3000
+      CLEANUP_GRACE_DAYS: 30
+      DEMO_EXPIRY_DAYS: 7
+      RATE_LIMIT_MAX: 3
+      RATE_LIMIT_WINDOW_HOURS: 24
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["sh", "-c", "pnpm db:migrate && pnpm dev"]
+    volumes:
+      - ./src:/app/src
+      - ./astro.config.mjs:/app/astro.config.mjs
+      - ./tsconfig.json:/app/tsconfig.json
+
+volumes:
+  postgres-data:

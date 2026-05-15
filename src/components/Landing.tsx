@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const installCommand =
-  "curl -fsSL https://raw.githubusercontent.com/keevh/trimly/main/install.sh | sh && docker compose up -d";
+  "docker compose up --build";
 
 export default function Landing() {
   const [copied, setCopied] = useState(false);
@@ -34,7 +34,8 @@ export default function Landing() {
         </h1>
         <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
           Trimly es un acortador de enlaces open source, ligero y self-hosted
-          para proyectos personales, demos y despliegues propios.
+          para proyectos personales, demos y despliegues propios con Astro,
+          React y Postgres.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-16">
@@ -116,13 +117,13 @@ export default function Landing() {
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
                 <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
                 <span className="text-on-surface font-medium">
-                  Privacidad total sin rastreadores de terceros
+                  Frontend y API en el mismo dominio
                 </span>
               </li>
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
                 <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
                 <span className="text-on-surface font-medium">
-                  Modo demo configurable para instancias públicas
+                  Persistencia en Postgres con analytics reales
                 </span>
               </li>
             </ul>
@@ -160,14 +161,8 @@ export default function Landing() {
                     trimly
                   </CommandLine>
                   <CommandLine>
-                    <span className="text-primary font-semibold">curl</span>{" "}
-                    -fsSL https://raw.githubusercontent.com/keevh/trimly/main/install.sh
-                    {" | "}
-                    <span className="text-primary font-semibold">sh</span>
-                  </CommandLine>
-                  <CommandLine>
                     <span className="text-primary font-semibold">docker compose</span>{" "}
-                    up -d
+                    up --build
                   </CommandLine>
                   <div className="flex items-center gap-4 mt-2">
                     <code className="font-mono text-sm text-on-surface flex items-center h-5">
