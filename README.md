@@ -32,6 +32,14 @@ Luego abre:
 - `http://localhost:3000/demo`
 - `http://localhost:3000/s/demo`
 
+### Produccion local con Docker
+
+Si quieres probar una configuracion mas parecida a produccion, usa:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
 ### En local
 
 Si prefieres correrlo sin Docker, necesitas una base Postgres disponible y esta conexión:
@@ -48,6 +56,31 @@ pnpm build
 pnpm lint
 pnpm db:migrate
 ```
+
+## Deploy en Railway
+
+1. Crea un proyecto en Railway.
+2. Agrega un servicio web conectado a este repositorio.
+3. Agrega PostgreSQL en el mismo proyecto.
+4. Railway detectara automaticamente el `Dockerfile` del repo.
+5. Configura estas variables en el servicio web:
+
+```bash
+APP_BASE_URL=https://your-domain.example
+DATABASE_URL=<reference to Railway Postgres>
+IP_HASH_SALT=<long-random-secret>
+PGSSL=true
+CLEANUP_GRACE_DAYS=30
+DEMO_EXPIRY_DAYS=7
+RATE_LIMIT_MAX=3
+RATE_LIMIT_WINDOW_HOURS=24
+```
+
+6. En Railway, activa `Public Networking` para el servicio web.
+7. Agrega tu dominio personalizado.
+8. Crea en tu DNS los registros `CNAME` y `TXT` que Railway te entregue.
+
+Railway se encargara del certificado SSL automaticamente.
 
 ## Flujo de uso
 
@@ -164,4 +197,3 @@ Se validó con:
 - `pnpm build`
 - requests reales al servidor local
 - requests dentro del contenedor Docker
-

@@ -289,7 +289,8 @@ export async function resolveCountryCode(headers, ipAddress) {
 }
 
 export function buildPublicUrls(request, slug) {
-  const origin = new URL(request.url).origin;
+  const configuredBaseUrl = process.env.APP_BASE_URL?.trim();
+  const origin = configuredBaseUrl || new URL(request.url).origin;
   return {
     shortUrl: `${origin}/t/${slug}`,
     statsUrl: `${origin}/s/${slug}`,

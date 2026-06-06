@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: trimly
+      POSTGRES_USER: trimly
+      POSTGRES_PASSWORD: trimly
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trimly -d trimly"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: postgres://trimly:trimly@postgres:5432/trimly
+      APP_BASE_URL: https://your-domain.example
+      IP_HASH_SALT: change-me-in-production
+      CLEANUP_GRACE_DAYS: 30
+      DEMO_EXPIRY_DAYS: 7
+      RATE_LIMIT_MAX: 3
+      RATE_LIMIT_WINDOW_HOURS: 24
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
