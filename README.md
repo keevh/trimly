@@ -1,26 +1,37 @@
 # Trimly
 
-Trimly es una demo full-stack de acortador de enlaces construida con Astro, React y Postgres, pensada para correr en local con Docker Compose.
+Acortador de enlaces open source y self-hosted con estadísticas públicas, expiración automática y arranque local simple con Docker.
 
-## Qué incluye
+Trimly te permite crear enlaces cortos, compartirlos y consultar métricas básicas sin depender de una plataforma externa. Está pensado para personas y equipos que quieren controlar sus datos, desplegar su propia instancia y tener una base clara para extender el producto.
 
-- Landing pública
-- Demo real para crear enlaces
-- Redirect público en `/t/:slug`
-- Stats públicas en `/s/:slug`
-- Borrado con `managementToken` privado
-- Rate limit de creación por IP
-- Persistencia en Postgres
+## Por qué Trimly
 
-## Requisitos
+- **Self-hosted**: ejecútalo en tu propia infraestructura.
+- **Open source**: revisa, adapta y mejora el código.
+- **Simple de probar**: levanta app y base de datos con Docker Compose.
+- **Con estadísticas**: cada enlace tiene una página pública de métricas.
+- **Con control privado**: los enlaces pueden borrarse usando un `managementToken`.
+
+## Características
+
+- Creación de enlaces cortos desde una demo funcional.
+- Alias personalizados para URLs más memorables.
+- Redirect público en `/t/:slug`.
+- Estadísticas públicas en `/s/:slug`.
+- Borrado de enlaces con token privado.
+- Rate limiting por IP para reducir abuso.
+- Persistencia en Postgres.
+- Expiración automática de enlaces demo.
+
+## Inicio rápido
+
+Requisitos:
 
 - Node.js 22+
 - pnpm 11+
 - Docker y Docker Compose
 
-## Arranque rápido
-
-### Con Docker
+Levanta Trimly con Docker:
 
 ```bash
 docker compose up --build
@@ -30,170 +41,86 @@ Luego abre:
 
 - `http://localhost:3000/`
 - `http://localhost:3000/demo`
-- `http://localhost:3000/s/demo`
 
-### Produccion local con Docker
+## Uso básico
 
-Si quieres probar una configuracion mas parecida a produccion, usa:
+1. Entra a `/demo`.
+2. Pega una URL larga.
+3. Define un alias opcional.
+4. Crea el enlace corto.
+5. Guarda el `managementToken` si quieres borrarlo después.
+6. Comparte el enlace corto o revisa sus estadísticas públicas.
 
-```bash
-docker compose -f docker-compose.prod.yml up --build -d
-```
+## Stack
 
-### En local
+- Astro
+- React
+- Postgres
+- Tailwind CSS
+- Docker
+- pnpm
 
-Si prefieres correrlo sin Docker, necesitas una base Postgres disponible y esta conexión:
+## Variables de entorno
 
-```bash
-postgres://trimly:trimly@127.0.0.1:5433/trimly
-```
+| Variable | Descripción |
+| --- | --- |
+| `APP_BASE_URL` | URL base usada para construir enlaces públicos. |
+| `DATABASE_URL` | Conexión a Postgres. |
+| `IP_HASH_SALT` | Secreto usado para hashear IPs. |
+| `PGSSL` | Activa SSL para conexiones Postgres cuando aplica. |
+| `CLEANUP_GRACE_DAYS` | Días de gracia antes de eliminar enlaces expirados. |
+| `DEMO_EXPIRY_DAYS` | Días de vida para enlaces creados desde la demo. |
+| `RATE_LIMIT_MAX` | Máximo de enlaces por IP dentro de la ventana definida. |
+| `RATE_LIMIT_WINDOW_HOURS` | Ventana de tiempo del rate limit, en horas. |
 
 ## Scripts
 
 ```bash
 pnpm dev
 pnpm build
+pnpm start
 pnpm lint
 pnpm db:migrate
 ```
 
-## Deploy en Railway
+## API
 
-1. Crea un proyecto en Railway.
-2. Agrega un servicio web conectado a este repositorio.
-3. Agrega PostgreSQL en el mismo proyecto.
-4. Railway detectara automaticamente el `Dockerfile` del repo.
-5. Configura estas variables en el servicio web:
+Trimly expone una API pequeña para el flujo principal:
+
+- `POST /api/links`: crea un enlace corto.
+- `GET /api/links/:slug/stats`: devuelve estadísticas públicas.
+- `DELETE /api/links/:slug`: borra un enlace usando `managementToken`.
+
+## Roadmap
+
+- [ ] Códigos QR por enlace.
+- [ ] Protección por contraseña.
+- [ ] Edición de enlaces existentes.
+- [ ] Dashboard con autenticación.
+- [ ] Exportación de métricas.
+- [ ] API keys para integraciones.
+- [ ] Configuración de expiración por enlace.
+- [ ] Healthcheck para despliegues self-hosted.
+- [ ] Imagen Docker publicada.
+- [ ] Script de instalación y actualización para instancias self-hosted.
+- [ ] Scripts de backup y restore para Postgres.
+- [ ] Ejemplos de reverse proxy con HTTPS.
+- [ ] Migraciones versionadas para actualizar la base de datos sin perder datos.
+- [ ] Configuración de retención de enlaces y métricas.
+- [ ] Modo privado para desactivar la creación pública de enlaces.
+
+## Contribuir
+
+Las contribuciones son bienvenidas. Puedes abrir un issue para proponer mejoras, reportar bugs o discutir nuevas funcionalidades antes de enviar un cambio grande.
+
+Para trabajar en local, instala dependencias, levanta los servicios necesarios y valida tus cambios antes de abrir un pull request:
 
 ```bash
-APP_BASE_URL=https://your-domain.example
-DATABASE_URL=<reference to Railway Postgres>
-IP_HASH_SALT=<long-random-secret>
-PGSSL=true
-CLEANUP_GRACE_DAYS=30
-DEMO_EXPIRY_DAYS=7
-RATE_LIMIT_MAX=3
-RATE_LIMIT_WINDOW_HOURS=24
+pnpm install
+pnpm lint
+pnpm build
 ```
 
-6. En Railway, activa `Public Networking` para el servicio web.
-7. Agrega tu dominio personalizado.
-8. Crea en tu DNS los registros `CNAME` y `TXT` que Railway te entregue.
+## Licencia
 
-Railway se encargara del certificado SSL automaticamente.
-
-## Flujo de uso
-
-1. Entra a `/demo`.
-2. Pega una URL larga.
-3. Opcionalmente define un alias.
-4. Crea el enlace.
-5. Guarda el `managementToken` si luego quieres borrarlo.
-6. Abre el `shortUrl` para redirigir.
-7. Abre el `statsUrl` para ver métricas públicas.
-
-## Endpoints
-
-### Crear enlace
-
-`POST /api/links`
-
-Request:
-
-```json
-{
-  "destinationUrl": "https://example.com",
-  "customAlias": "mi-alias",
-  "source": "demo"
-}
-```
-
-Response:
-
-```json
-{
-  "slug": "mi-alias",
-  "shortUrl": "http://localhost:3000/t/mi-alias",
-  "statsUrl": "http://localhost:3000/s/mi-alias",
-  "managementToken": "token-privado",
-  "expiresAt": "2026-06-18T00:00:00.000Z"
-}
-```
-
-### Ver estadísticas
-
-`GET /api/links/:slug/stats`
-
-Devuelve:
-
-- metadatos del enlace
-- total de clics
-- último clic
-- clicks por día
-- top referrers
-- top devices
-- top countries
-
-### Borrar enlace
-
-`DELETE /api/links/:slug`
-
-Request:
-
-```json
-{
-  "managementToken": "token-privado"
-}
-```
-
-### Redirect público
-
-`GET /t/:slug`
-
-### Stats públicas
-
-`GET /s/:slug`
-
-## Cómo se calculan las métricas
-
-### Fuentes de tráfico
-
-- Se usa el header `Referer`.
-- Si no existe, se guarda como `Direct / sin referer`.
-- Apps como Facebook o WhatsApp suelen quitar ese header, así que pueden aparecer como directas.
-
-### Dispositivos
-
-- `desktop`
-- `mobile`
-- `tablet`
-- `bot`
-- `cli`
-- `unknown`
-
-Los requests desde consola como `curl` se clasifican como `CLI`.
-
-### Ubicaciones
-
-- Primero se intentan headers geo del proxy/CDN.
-- Luego `Accept-Language`.
-- Luego un lookup externo si hay una IP pública real.
-- Si no hay señal útil, queda `Sin país`.
-
-En local es normal ver `Unknown` o `Sin país` cuando no existe una fuente geográfica confiable.
-
-## Limitaciones conocidas
-
-- `Referer` no siempre llega.
-- Las apps móviles suelen ocultarlo.
-- En redes privadas o `localhost` la geolocalización suele ser incompleta.
-- Los clics viejos pueden seguir mostrando valores antiguos como `Unknown`.
-
-## Verificación
-
-Se validó con:
-
-- `pnpm lint`
-- `pnpm build`
-- requests reales al servidor local
-- requests dentro del contenedor Docker
+Trimly está licenciado bajo MIT.
