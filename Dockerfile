@@ -15,12 +15,10 @@ FROM node:22-bookworm-slim AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
-
-RUN corepack enable
+LABEL org.opencontainers.image.source="https://github.com/keevh/trimly"
 
 COPY --from=build /app /app
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm db:migrate && pnpm start"]
-
+CMD ["sh", "-c", "node scripts/migrate.mjs && node dist/server/entry.mjs"]
