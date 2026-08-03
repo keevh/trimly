@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: trimly
       POSTGRES_USER: trimly
-      POSTGRES_PASSWORD: trimly
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U trimly -d trimly"]
       interval: 5s
@@ -13,26 +13,44 @@ services:
       retries: 10
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    mem_limit: 192m
 
   app:
-    build: .
+    image: ${TRIMLY_IMAGE:?Set TRIMLY_IMAGE in .env to a published version}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3000
-      DATABASE_URL: postgres://trimly:trimly@postgres:5432/trimly
-      APP_BASE_URL: https://your-domain.example
-      IP_HASH_SALT: change-me-in-production
+      DATABASE_URL: postgresql://trimly:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/trimly
+      APP_BASE_URL: ${APP_BASE_URL:?Set APP_BASE_URL in .env}
+      IP_HASH_SALT: ${IP_HASH_SALT:?Set IP_HASH_SALT in .env}
       CLEANUP_GRACE_DAYS: 30
       DEMO_EXPIRY_DAYS: 7
       RATE_LIMIT_MAX: 3
       RATE_LIMIT_WINDOW_HOURS: 24
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      default: {}
+      caddy:
+        aliases:
+          - trimly
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/links/health/stats').then(r => process.exit(r.status === 404 ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
   postgres-data:
+
+networks:
+  caddy:
+    name: voltiaz_default
+    external: true
