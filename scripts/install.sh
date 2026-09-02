@@ -10,7 +10,7 @@ fail() {
   exit 1
 }
 
-if [[ "$TRIMLY_VERSION" == "__TRIMLY_VERSION__" ]]; then
+if [[ ! "$TRIMLY_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   fail "Este script debe descargarse desde un release de Trimly."
 fi
 
