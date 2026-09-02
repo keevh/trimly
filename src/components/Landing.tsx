@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const installCommand =
-  "docker compose up --build";
+  "curl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash";
 
 export default function Landing() {
   const [copied, setCopied] = useState(false);
@@ -104,14 +104,14 @@ export default function Landing() {
             </h2>
             <p className="text-lg text-on-surface-variant mb-8 leading-relaxed">
               Toma el control total de tus datos. Despliega Trimly en tu propia
-              infraestructura en minutos utilizando Docker. Privado, extensible
-              y listo para producción.
+              infraestructura con Docker. El instalador prepara la aplicación y
+              Postgres; solo necesitas indicar tu URL pública.
             </p>
             <ul className="flex flex-col gap-4 mb-8">
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
                 <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
                 <span className="text-on-surface font-medium">
-                  Despliegue rápido con Docker Compose
+                  Instalación rápida en Linux con Docker Compose
                 </span>
               </li>
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
@@ -156,14 +156,14 @@ export default function Landing() {
               <div className="p-8 overflow-x-auto flex-1 flex flex-col justify-center">
                 <div className="flex flex-col gap-4">
                   <CommandLine>
-                    <span className="text-primary font-semibold">mkdir</span>{" "}
-                    trimly <span className="text-primary font-semibold">&amp;&amp; cd</span>{" "}
-                    trimly
+                    <span className="text-primary font-semibold">curl -fsSL</span>{" "}
+                    https://github.com/keevh/trimly/releases/latest/download/install.sh{" "}
+                    <span className="text-primary font-semibold">| bash</span>
                   </CommandLine>
-                  <CommandLine>
-                    <span className="text-primary font-semibold">docker compose</span>{" "}
-                    up --build
-                  </CommandLine>
+                  <p className="text-xs text-on-surface-variant pl-6">
+                    Requiere Docker Engine y Docker Compose. Abre el puerto 3000
+                    para acceder desde otra máquina.
+                  </p>
                   <div className="flex items-center gap-4 mt-2">
                     <code className="font-mono text-sm text-on-surface flex items-center h-5">
                       <span className="text-outline mr-3 select-none">~</span>

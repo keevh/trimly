@@ -23,24 +23,59 @@ Trimly te permite crear enlaces cortos, compartirlos y consultar métricas bási
 - Persistencia en Postgres.
 - Expiración automática de enlaces demo.
 
-## Inicio rápido
+## Instalación rápida en Linux
 
 Requisitos:
 
-- Node.js 22+
-- pnpm 11+
-- Docker y Docker Compose
+- Docker Engine activo y Docker Compose instalados.
+- `curl` y una terminal interactiva.
+- Puerto TCP 3000 accesible para quienes vayan a usar la instancia.
 
-Levanta Trimly con Docker:
+Desde el directorio donde quieras crear `trimly/`, ejecuta:
+
+```bash
+curl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash
+```
+
+El instalador pide la URL pública (`http://IP:3000` o un dominio), descarga una versión publicada, genera contraseñas locales y levanta la aplicación y PostgreSQL. Guarda la configuración en `./trimly/.env` y los datos de Postgres en un volumen Docker. El script no instala Docker ni cambia el firewall. Antes de ejecutarlo, puedes [revisar el código del instalador](https://github.com/keevh/trimly/blob/master/scripts/install.sh).
+
+Luego abre la URL indicada y añade `/demo` para crear un enlace. Para ver el estado de los servicios:
+
+```bash
+cd trimly
+docker compose ps
+```
+
+Si ya existe `./trimly`, el instalador se detiene sin modificar esa carpeta. Para actualizar una instancia instalada, cambia `TRIMLY_IMAGE` en `trimly/.env` a una versión publicada y ejecuta `docker compose pull && docker compose up -d --wait` dentro de ella. Haz un backup del volumen de Postgres antes de actualizar.
+
+## Desarrollo local
+
+Requiere Node.js 22+, pnpm 11+ y Docker Compose. Desde una copia del repositorio:
 
 ```bash
 docker compose up --build
 ```
 
-Luego abre:
+La configuración de desarrollo usa Astro en modo desarrollo y publica Postgres en el puerto 5433. Abre:
 
 - `http://localhost:3000/`
 - `http://localhost:3000/demo`
+
+## Despliegue existente en Azure
+
+`docker-compose.prod.yml` conserva la red externa de Caddy `voltiaz_default` y el volumen `postgres-data`. En la VM, actualiza el archivo Compose y añade a su `.env` `TRIMLY_IMAGE=ghcr.io/keevh/trimly:vX.Y.Z`, sustituyendo la versión por una publicada. Conserva los valores actuales de `POSTGRES_PASSWORD`, `IP_HASH_SALT` y `APP_BASE_URL`; cambiarlos afectaría el acceso a los datos o las URL generadas. Tras hacer un backup de Postgres, ejecuta en el directorio de despliegue:
+
+```bash
+docker compose -f docker-compose.prod.yml config --quiet
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d --wait
+```
+
+Comprueba la aplicación a través del dominio servido por Caddy y revisa `docker compose -f docker-compose.prod.yml ps`. Este procedimiento no requiere compilar Node en la VM ni abre el puerto 3000 públicamente. La publicación de una nueva imagen no actualiza Azure automáticamente.
+
+## Publicar una versión
+
+Publica un GitHub Release estable con una etiqueta como `v1.0.0`. El workflow valida el proyecto, publica las imágenes `ghcr.io/keevh/trimly:v1.0.0` y `:latest`, y adjunta `install.sh` junto con `docker-compose.install.yml` al release. Verifica que el paquete GHCR sea público y que ambos assets aparezcan antes de compartir el comando de instalación. [GitHub documenta la visibilidad de paquetes](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
 
 ## Uso básico
 
@@ -65,6 +100,7 @@ Luego abre:
 | Variable | Descripción |
 | --- | --- |
 | `APP_BASE_URL` | URL base usada para construir enlaces públicos. |
+| `TRIMLY_IMAGE` | Imagen y versión publicada usada por los Compose de instalación y Azure. |
 | `DATABASE_URL` | Conexión a Postgres. |
 | `IP_HASH_SALT` | Secreto usado para hashear IPs. |
 | `PGSSL` | Activa SSL para conexiones Postgres cuando aplica. |
@@ -102,7 +138,7 @@ Trimly expone una API pequeña para el flujo principal:
 - [ ] Configuración de expiración por enlace.
 - [ ] Healthcheck para despliegues self-hosted.
 - [ ] Imagen Docker publicada.
-- [ ] Script de instalación y actualización para instancias self-hosted.
+- [ ] Script de actualización automática para instancias self-hosted.
 - [ ] Scripts de backup y restore para Postgres.
 - [ ] Ejemplos de reverse proxy con HTTPS.
 - [ ] Migraciones versionadas para actualizar la base de datos sin perder datos.
