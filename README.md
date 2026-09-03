@@ -61,18 +61,6 @@ La configuración de desarrollo usa Astro en modo desarrollo y publica Postgres 
 - `http://localhost:3000/`
 - `http://localhost:3000/demo`
 
-## Despliegue existente en Azure
-
-`docker-compose.prod.yml` conserva la red externa de Caddy `voltiaz_default` y el volumen `postgres-data`. En la VM, actualiza el archivo Compose y añade a su `.env` `TRIMLY_IMAGE=ghcr.io/keevh/trimly:vX.Y.Z`, sustituyendo la versión por una publicada. Conserva los valores actuales de `POSTGRES_PASSWORD`, `IP_HASH_SALT` y `APP_BASE_URL`; cambiarlos afectaría el acceso a los datos o las URL generadas. Tras hacer un backup de Postgres, ejecuta en el directorio de despliegue:
-
-```bash
-docker compose -f docker-compose.prod.yml config --quiet
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d --wait
-```
-
-Comprueba la aplicación a través del dominio servido por Caddy y revisa `docker compose -f docker-compose.prod.yml ps`. Este procedimiento no requiere compilar Node en la VM ni abre el puerto 3000 públicamente. La publicación de una nueva imagen no actualiza Azure automáticamente.
-
 ## Publicar una versión
 
 Publica un GitHub Release estable con una etiqueta como `v1.0.0`. El workflow valida el proyecto, publica las imágenes `ghcr.io/keevh/trimly:v1.0.0` y `:latest`, y adjunta `install.sh` junto con `docker-compose.install.yml` al release. Verifica que el paquete GHCR sea público y que ambos assets aparezcan antes de compartir el comando de instalación. [GitHub documenta la visibilidad de paquetes](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
@@ -100,7 +88,7 @@ Publica un GitHub Release estable con una etiqueta como `v1.0.0`. El workflow va
 | Variable | Descripción |
 | --- | --- |
 | `APP_BASE_URL` | URL base usada para construir enlaces públicos. |
-| `TRIMLY_IMAGE` | Imagen y versión publicada usada por los Compose de instalación y Azure. |
+| `TRIMLY_IMAGE` | Imagen y versión publicada usada por los archivos Compose. |
 | `DATABASE_URL` | Conexión a Postgres. |
 | `IP_HASH_SALT` | Secreto usado para hashear IPs. |
 | `PGSSL` | Activa SSL para conexiones Postgres cuando aplica. |
