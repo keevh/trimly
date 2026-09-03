@@ -137,7 +137,7 @@ Trimly expone una API pequeña para el flujo principal:
 - [ ] API keys para integraciones.
 - [ ] Configuración de expiración por enlace.
 - [ ] Healthcheck para despliegues self-hosted.
-- [ ] Imagen Docker publicada.
+- [x] Imagen Docker publicada.
 - [ ] Script de actualización automática para instancias self-hosted.
 - [ ] Scripts de backup y restore para Postgres.
 - [ ] Ejemplos de reverse proxy con HTTPS.
