@@ -37,7 +37,7 @@ Desde el directorio donde quieras crear `trimly/`, ejecuta:
 curl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash
 ```
 
-El instalador pide la URL pública (`http://IP:3000` o un dominio), descarga una versión publicada, genera contraseñas locales y levanta la aplicación y PostgreSQL. Guarda la configuración en `./trimly/.env` y los datos de Postgres en un volumen Docker. El script no instala Docker ni cambia el firewall. Antes de ejecutarlo, puedes [revisar el código del instalador](https://github.com/keevh/trimly/blob/master/scripts/install.sh).
+El instalador pregunta qué puerto usar. Pulsa Enter para aceptar el 3000 si está libre o el siguiente puerto disponible; también puedes escribir otro puerto. Luego pide la URL que se usará en los enlaces generados: pulsa Enter para usar `http://localhost:PUERTO` si solo vas a probarlo en ese equipo; para acceder desde otros dispositivos, escribe una IP o dominio que puedan alcanzar. Después descarga una versión publicada, genera contraseñas locales y levanta la aplicación y PostgreSQL. Guarda la configuración en `./trimly/.env` y los datos de Postgres en un volumen Docker. El script no instala Docker ni cambia el firewall. Antes de ejecutarlo, puedes [revisar el código del instalador](https://github.com/keevh/trimly/blob/master/scripts/install.sh).
 
 Luego abre la URL indicada y añade `/demo` para crear un enlace. Para ver el estado de los servicios:
 
@@ -89,6 +89,7 @@ Publica un GitHub Release estable con una etiqueta como `v1.0.0`. El workflow va
 | --- | --- |
 | `APP_BASE_URL` | URL base usada para construir enlaces públicos. |
 | `TRIMLY_IMAGE` | Imagen y versión publicada usada por los archivos Compose. |
+| `TRIMLY_PORT` | Puerto del equipo donde se publica la aplicación (3000 por defecto). |
 | `DATABASE_URL` | Conexión a Postgres. |
 | `IP_HASH_SALT` | Secreto usado para hashear IPs. |
 | `PGSSL` | Activa SSL para conexiones Postgres cuando aplica. |

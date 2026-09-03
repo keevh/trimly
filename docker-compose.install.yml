@@ -29,7 +29,7 @@ services:
       RATE_LIMIT_MAX: 3
       RATE_LIMIT_WINDOW_HOURS: 24
     ports:
-      - "3000:3000"
+      - "${TRIMLY_PORT:-3000}:3000"
     depends_on:
       postgres:
         condition: service_healthy

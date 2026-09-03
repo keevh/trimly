@@ -160,10 +160,6 @@ export default function Landing() {
                     https://github.com/keevh/trimly/releases/latest/download/install.sh{" "}
                     <span className="text-primary font-semibold">| bash</span>
                   </CommandLine>
-                  <p className="text-xs text-on-surface-variant pl-6">
-                    Requiere Docker Engine y Docker Compose. Abre el puerto 3000
-                    para acceder desde otra máquina.
-                  </p>
                   <div className="flex items-center gap-4 mt-2">
                     <code className="font-mono text-sm text-on-surface flex items-center h-5">
                       <span className="text-outline mr-3 select-none">~</span>
