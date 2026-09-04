@@ -98,10 +98,18 @@ printf 'Instalando Trimly %s en %s...\n' "$TRIMLY_VERSION" "$INSTALL_DIR"
 docker compose --project-directory "$INSTALL_DIR" -f "${INSTALL_DIR}/compose.yml" --env-file "${INSTALL_DIR}/.env" pull
 docker compose --project-directory "$INSTALL_DIR" -f "${INSTALL_DIR}/compose.yml" --env-file "${INSTALL_DIR}/.env" up -d --wait
 
-printf '\nTrimly está disponible en %s\n' "$APP_BASE_URL"
-printf 'Configuración y datos: %s\n' "$INSTALL_DIR"
+printf '\nInstalación completada\n'
+printf 'Versión: %s\n' "$TRIMLY_VERSION"
+printf 'Directorio creado: %s\n' "$INSTALL_DIR"
+printf 'Configuración: compose.yml y .env con secretos locales\n'
+printf 'Servicios iniciados: Trimly y PostgreSQL\n'
+printf 'Puerto del equipo: %s\n' "$TRIMLY_PORT"
+printf 'URL para abrir Trimly y generar enlaces: %s\n' "$APP_BASE_URL"
+printf 'Datos de PostgreSQL: volumen Docker persistente\n'
 if [[ "$APP_BASE_URL" == "http://localhost:${TRIMLY_PORT}" || "$APP_BASE_URL" == "http://127.0.0.1:${TRIMLY_PORT}" ]]; then
   printf 'Los enlaces con localhost o 127.0.0.1 solo funcionarán en este equipo.\n'
 else
   printf 'Si accedes desde otra máquina, verifica el firewall o proxy de tu servidor.\n'
 fi
+printf '\nEstado de los servicios:\n'
+docker compose --project-directory "$INSTALL_DIR" -f "${INSTALL_DIR}/compose.yml" --env-file "${INSTALL_DIR}/.env" ps

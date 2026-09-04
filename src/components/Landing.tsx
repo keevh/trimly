@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const installCommand =
-  "curl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash";
+  "mkdir -p apps && cd apps\ncurl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash";
 
 export default function Landing() {
   const [copied, setCopied] = useState(false);
@@ -105,7 +105,7 @@ export default function Landing() {
             <p className="text-lg text-on-surface-variant mb-8 leading-relaxed">
               Toma el control total de tus datos. Despliega Trimly en tu propia
               infraestructura con Docker. El instalador prepara la aplicación y
-              Postgres; solo necesitas indicar tu URL pública.
+              Postgres en una carpeta trimly/ dentro del directorio desde el que lo ejecutes.
             </p>
             <ul className="flex flex-col gap-4 mb-8">
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
@@ -156,10 +156,18 @@ export default function Landing() {
               <div className="p-8 overflow-x-auto flex-1 flex flex-col justify-center">
                 <div className="flex flex-col gap-4">
                   <CommandLine>
+                    <span className="text-primary font-semibold">mkdir -p</span>{" "}
+                    apps <span className="text-primary font-semibold">&& cd</span>{" "}
+                    apps
+                  </CommandLine>
+                  <CommandLine>
                     <span className="text-primary font-semibold">curl -fsSL</span>{" "}
                     https://github.com/keevh/trimly/releases/latest/download/install.sh{" "}
                     <span className="text-primary font-semibold">| bash</span>
                   </CommandLine>
+                  <p className="text-xs text-on-surface-variant pl-6">
+                    Este ejemplo crea apps/trimly/. Puedes elegir otra carpeta padre.
+                  </p>
                   <div className="flex items-center gap-4 mt-2">
                     <code className="font-mono text-sm text-on-surface flex items-center h-5">
                       <span className="text-outline mr-3 select-none">~</span>

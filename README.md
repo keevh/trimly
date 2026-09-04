@@ -29,11 +29,12 @@ Requisitos:
 
 - Docker Engine activo y Docker Compose instalados.
 - `curl` y una terminal interactiva.
-- Puerto TCP 3000 accesible para quienes vayan a usar la instancia.
+- Puerto TCP elegido durante la instalación accesible para quienes vayan a usar la instancia.
 
-Desde el directorio donde quieras crear `trimly/`, ejecuta:
+Desde el directorio donde quieras crear `apps/trimly/`, ejecuta:
 
 ```bash
+mkdir -p apps && cd apps
 curl -fsSL https://github.com/keevh/trimly/releases/latest/download/install.sh | bash
 ```
 
@@ -46,7 +47,7 @@ cd trimly
 docker compose ps
 ```
 
-Si ya existe `./trimly`, el instalador se detiene sin modificar esa carpeta. Para actualizar una instancia instalada, cambia `TRIMLY_IMAGE` en `trimly/.env` a una versión publicada y ejecuta `docker compose pull && docker compose up -d --wait` dentro de ella. Haz un backup del volumen de Postgres antes de actualizar.
+Al terminar, el script resume la versión, el directorio creado, el puerto, la URL y el estado de los servicios. Si ya existe `./trimly`, el instalador se detiene sin modificar esa carpeta. Para actualizar una instancia instalada, cambia `TRIMLY_IMAGE` en `trimly/.env` a una versión publicada y ejecuta `docker compose pull && docker compose up -d --wait` dentro de ella. Haz un backup del volumen de Postgres antes de actualizar.
 
 ## Desarrollo local
 
