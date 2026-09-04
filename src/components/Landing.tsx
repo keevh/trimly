@@ -103,9 +103,7 @@ export default function Landing() {
               Hospédalo a tu manera
             </h2>
             <p className="text-lg text-on-surface-variant mb-8 leading-relaxed">
-              Toma el control total de tus datos. Despliega Trimly en tu propia
-              infraestructura con Docker. El instalador prepara la aplicación y
-              Postgres en una carpeta trimly/ dentro del directorio desde el que lo ejecutes.
+              Despliega Trimly y Postgres en tu servidor con Docker.
             </p>
             <ul className="flex flex-col gap-4 mb-8">
               <li className="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
@@ -165,9 +163,6 @@ export default function Landing() {
                     https://github.com/keevh/trimly/releases/latest/download/install.sh{" "}
                     <span className="text-primary font-semibold">| bash</span>
                   </CommandLine>
-                  <p className="text-xs text-on-surface-variant pl-6">
-                    Este ejemplo crea apps/trimly/. Puedes elegir otra carpeta padre.
-                  </p>
                   <div className="flex items-center gap-4 mt-2">
                     <code className="font-mono text-sm text-on-surface flex items-center h-5">
                       <span className="text-outline mr-3 select-none">~</span>
